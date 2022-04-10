@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.notesapp.dto.BackUpInfoDTO;
 import com.notesapp.dto.ResponseDTO;
 import com.notesapp.model.User;
@@ -52,6 +53,9 @@ public class Controller {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
 	
 	@Autowired
 	public Controller(StorageService storageService) {
@@ -88,10 +92,13 @@ public class Controller {
 			byte[] digest = messageDigest.digest(bytes);
 			String hash = DatatypeConverter.printHexBinary(digest);
 			
+			String backupInfo = objectMapper
+					.writeValueAsString(new BackUpInfoDTO(u.getLastBackUpDate(), u.getLastBackUpSize()));
 			return ResponseEntity.ok()
 					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" +
 			file.getFilename() + "\"")
 					.header("Checksum", hash)
+					.header("Info", backupInfo)
 					.body(file);
 		} else {
 			return ResponseEntity.notFound().build();
