@@ -186,6 +186,7 @@ public class Controller {
 	 * @param response {@link HttpServletResponse}
 	 * @return response dto
 	 */
+	@Transactional
 	@PostMapping("register")
 	public @ResponseBody ResponseDTO addNewUser(@RequestParam String email, 
 			@RequestParam String password,
@@ -402,7 +403,6 @@ public class Controller {
 	 * @param email email to be verified
 	 * @return true if valid or false otherwise
 	 */
-	@Transactional
 	private boolean verifyThatEmailIsAvailable(String email) {
 		User user = userRepository.findByEmail(email);
 		if (user == null) return true;
