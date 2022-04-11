@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import javax.xml.bind.DatatypeConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -401,6 +402,7 @@ public class Controller {
 	 * @param email email to be verified
 	 * @return true if valid or false otherwise
 	 */
+	@Transactional
 	private boolean verifyThatEmailIsAvailable(String email) {
 		User user = userRepository.findByEmail(email);
 		if (user == null) return true;
@@ -408,7 +410,6 @@ public class Controller {
 			userRepository.delete(user);
 			
 			entityManager.flush();
-			entityManager.clear();
 			return true;
 		}
 		return false;
