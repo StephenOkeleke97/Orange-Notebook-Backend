@@ -31,6 +31,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.notesapp.dto.LoginDTO;
 import com.notesapp.dto.ResponseDTO;
+import com.notesapp.model.User;
+import com.notesapp.repository.UserRepository;
 
 /**
  * A class that represents the security configuration
@@ -60,6 +62,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	
 	@Autowired
 	JwtTokenFilter jwtTokenFilter;
+	
+	@Autowired
+	UserRepository userRepository;
 	
 	@Value("${secret}")
 	String secret;
@@ -141,10 +146,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 		public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 				Authentication authentication) throws IOException, ServletException {
 			response.setStatus(200);
+			User u = userRepository.findByEmail(authentication.getName());
 			String jwt = JWT.create().withSubject(authentication.getName())
 					.withIssuedAt(new Date())
 					.sign(Algorithm.HMAC512(secret));
 			LoginDTO result = new LoginDTO("Success", false, jwt);
+			result.setTwoFactor(u.getTwoFactorAuthentication());
 			objectMapper.writeValue(response.getWriter(), result);
 		}
 		

@@ -20,6 +20,10 @@ public class LoginDTO {
 	 * Authentication token.
 	 */
 	private String token;
+	/**
+	 * Is two factor enabled
+	 */
+	private boolean twoFactor;
 	
 	public LoginDTO(String message, boolean error, String token) {
 		this.message = message;
@@ -49,5 +53,13 @@ public class LoginDTO {
 	
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+	public boolean isTwoFactor() {
+		return twoFactor;
+	}
+
+	public void setTwoFactor(boolean twoFactor) {
+		this.twoFactor = twoFactor;
 	}
 }
